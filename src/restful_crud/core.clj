@@ -10,6 +10,6 @@
    :password "postgres"])
 
 (defn -main
-  "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (db/set-default-db-connection! db-spec)
+  (models/set-root-namespace! 'restful-crud.models))
