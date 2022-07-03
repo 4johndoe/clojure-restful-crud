@@ -6,7 +6,7 @@
             [clojure.set :refer [rename-keys]]
             [toucan.db :as db]
             [ring.util.http-response :refer [created ok not-found]]
-            [compojure.api.sweet :refer [POST GET]]))
+            [compojure.api.sweet :refer [POST GET PUT DELETE]]))
 
 (defn valid-username? [name]
   (str/non-blank-with-max-length? 50 name))
@@ -53,10 +53,28 @@
        (map #(dissoc % :password_hash))
        ok))
 
+(defn update-user-handler [id update-user-req]
+  (db/update! User id (canonicalize-user-req update-user-req))
+  (ok))
+
+(defn delete-user-handler [user-id]
+  (db/delete! User :id user-id)
+  (ok))
+
 (def user-routes
-  [; ...
+  [ ; ...
    (GET "/users/:id" []
      :path-params [id :- s/Int]
      (get-user-handler id))
+   
    (GET "/users" []
-     (get-users-handler))])
+     (get-users-handler))
+   
+   (PUT "/users/:id" []
+     :path-params [id :- s/Int]
+     :body [update-user-req UserRequestSchema]
+     (update-user-handler id update-user-req))
+   
+   (DELETE "/users/:id" []
+     :path-params [id :- s/Int]
+     (delete-user-handler id))])
