@@ -6,7 +6,8 @@
             [clojure.set :refer [rename-keys]]
             [toucan.db :as db]
             [ring.util.http-response :refer [created ok not-found]]
-            [compojure.api.sweet :refer [POST GET PUT DELETE]]))
+            [compojure.api.sweet :refer [POST GET PUT DELETE]]
+            [restful-crud.restful :as restful]))
 
 (defn valid-username? [name]
   (str/non-blank-with-max-length? 50 name))
@@ -78,3 +79,10 @@
    (DELETE "/users/:id" []
      :path-params [id :- s/Int]
      (delete-user-handler id))])
+
+(def user-entity-route
+  (restful/resource {:model User
+                     :name "users"
+                     :req-schema UserRequestSchema
+                     :leave #(dissoc % :password_hash)
+                     :enter canonicalize-user-req}))

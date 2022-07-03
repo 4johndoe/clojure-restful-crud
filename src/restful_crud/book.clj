@@ -4,7 +4,8 @@
             [restful-crud.models.book :refer [Book]]
             [toucan.db :as db]
             [ring.util.http-response :refer [ok not-found created]]
-            [compojure.api.sweet :refer [GET POST PUT DELETE]]))
+            [compojure.api.sweet :refer [GET POST PUT DELETE]]
+            [restful-crud.restful :as restful]))
 
 (defn valid-book-title? [title]
   (str/non-blank-with-max-length? 100 title))
@@ -66,3 +67,8 @@
    (DELETE "/books/:id" []
      :path-params [id :- s/Int]
      (delete-book-handler id))])
+
+(def book-entity-route
+  (restful/resource {:model Book
+                     :name "books"
+                     :req-schema BookRequestSchema}))
