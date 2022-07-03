@@ -6,10 +6,16 @@
             [restful-crud.user :refer [user-routes]]))
 
 (def db-spec
-  [:dbtype "postgres"
-   :dbname "restful-crud"
-   :user "postgres"
-   :password "postgres"])
+  {:classname   "org.postgresql.Driver"
+   :subprotocol "postgresql"
+   :subname     "//localhost:5434/restful-crud"
+   :user        "postgres"
+   :password    "postgres"}
+  ;; [:dbtype "postgres"
+      ;; :dbname "localhost:5434/restful-crud"
+      ;; :user "postgres"
+      ;; :password "postgres"]
+  )
 
 (def app (apply routes user-routes))
 
