@@ -3,7 +3,8 @@
             [toucan.models :as models]
             [ring.adapter.jetty :refer [run-jetty]]
             [compojure.api.sweet :refer [api routes]]
-            [restful-crud.user :refer [user-routes]]))
+            [restful-crud.user :refer [user-routes]]
+            [restful-crud.book :refer [book-routes]]))
 
 (def db-spec
   {:classname   "org.postgresql.Driver"
@@ -23,7 +24,8 @@
    :options {:ui {:validatorUrl nil}
              :data {:info {:version "1.0.0", :title "Restful CRUD API"}}}})
 
-(def app (api {:swagger swagger-config} (apply routes user-routes)))
+(def app (api {:swagger swagger-config} 
+              (apply routes (concat user-routes book-routes))))
 
 (defn -main
   [& args]
